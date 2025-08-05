@@ -3,481 +3,2460 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roommate Expense Calculator</title>
+    <title>SRS-Sunrise Advanced Production System</title>
     <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
             margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1, h2 {
+            padding: 0;
             color: #333;
-            text-align: center;
         }
-        .dashboard {
+        
+        .container {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .logo h2 {
+            margin: 0;
             display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 30px;
+            align-items: center;
+            font-size: 1.2rem;
         }
-        .panel {
-            flex: 1;
-            min-width: 300px;
-            border: 1px solid #ddd;
-            padding: 15px;
+        
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            background-color: var(--secondary);
             border-radius: 5px;
-            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        
+        .menu {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .menu-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .menu-item.active {
+            background-color: var(--secondary);
+        }
+        
+        .menu-item svg {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            fill: currentColor;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            padding: 20px;
+            background-color: white;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        /* Card Styles */
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .card-title {
+            margin-top: 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+        
+        .card-title svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            fill: var(--secondary);
+        }
+        
+        /* Form Styles */
+        .form-group {
             margin-bottom: 15px;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
         }
-        th {
-            background-color: #f2f2f2;
-        }
-        input, button {
-            padding: 8px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            border: none;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .admin-panel {
-            border: 2px solid #ff9800;
-            background-color: #fff8e1;
-        }
-        .result {
-            font-weight: bold;
-            margin-top: 10px;
+        
+        .form-control {
+            width: 100%;
             padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-primary {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-info {
+            background-color: var(--info);
+            color: white;
+        }
+        
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .data-table th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .data-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        /* Scanner Styles */
+        .scanner-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .scanner-video {
+            width: 100%;
+            display: block;
+        }
+        
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+        
+        .scanner-frame {
+            width: 80%;
+            height: 50%;
+            border: 3px solid var(--accent);
+            border-radius: 4px;
+            box-shadow: 0 0 0 100vmax rgba(0,0,0,0.5);
+        }
+        
+        .scan-status {
+            text-align: center;
+            padding: 10px;
+            margin-top: -10px;
+            font-size: 0.9rem;
+        }
+        
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--primary);
+        }
+        
+        .login-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 350px;
+            max-width: 90%;
+        }
+        
+        .login-box h2 {
+            margin-top: 0;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+        }
+        
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .badge-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .badge-primary {
+            background-color: #d1e7ff;
+            color: #084298;
+        }
+        
+        /* Alert Styles */
+        .alert {
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Grid Layout */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .user-info {
+                margin-top: 10px;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary);
             border-radius: 4px;
         }
-        .positive {
-            background-color: #dff0d8;
-            color: #3c763d;
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
         }
-        .negative {
-            background-color: #f2dede;
-            color: #a94442;
+        
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
         }
-        .login-form {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        
+        .text-muted {
+            color: #6c757d;
         }
-        .hidden {
-            display: none;
+        
+        .mt-3 {
+            margin-top: 15px;
         }
-        .logout-btn {
-            background-color: #f44336;
-            float: right;
+        
+        .mb-3 {
+            margin-bottom: 15px;
         }
-        .logout-btn:hover {
-            background-color: #d32f2f;
+        
+        .p-3 {
+            padding: 15px;
+        }
+        
+        /* Task No Colors */
+        .task-145 {
+            background-color: #ffeeba;
+        }
+        
+        .task-111 {
+            background-color: #bee5eb;
+        }
+        
+        .task-141 {
+            background-color: #c3e6cb;
+        }
+        
+        .task-70 {
+            background-color: #f5c6cb;
         }
     </style>
 </head>
 <body>
-    <div id="login-container" class="login-form">
-        <h2>Login</h2>
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" required>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-box">
+            <h2>SRS-Sunrise RFID System</h2>
+            <input type="text" id="loginUserId" placeholder="User ID" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button onclick="login()">Login</button>
         </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" required>
-        </div>
-        <button onclick="login()">Login</button>
     </div>
-
-    <div id="dashboard-container" class="container hidden">
-        <button class="logout-btn" onclick="logout()">Logout</button>
-        <h1>Roommate Expense Dashboard</h1>
+    
+    <!-- Main Application -->
+    <div class="container" id="appContainer" style="display: none;">
+        <div class="sidebar">
+            <div class="logo">
+                <h2>
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 16H4V8h16v12z"/>
+                            <path d="M11 10h2v4h-2zm0 6h2v2h-2z"/>
+                        </svg>
+                    </div>
+                    SRS-Sunrise
+                </h2>
+            </div>
+            
+            <ul class="menu" id="mainMenu">
+                <!-- Menu items will be loaded dynamically based on user permissions -->
+            </ul>
+        </div>
         
-        <div class="dashboard">
-            <div class="panel">
-                <h2>Monthly Expenses</h2>
-                <table id="expenses-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Total Market Cost</th>
-                            <th>Balance</th>
-                        </tr>
-                    </thead>
-                    <tbody id="expenses-body">
-                        <!-- Filled by JavaScript -->
-                    </tbody>
-                </table>
-                
-                <div>
-                    <h3>Add Fixed Expenses</h3>
-                    <div>
-                        <label for="rent">Room Rent:</label>
-                        <input type="number" id="rent" placeholder="Enter rent amount">
-                    </div>
-                    <div>
-                        <label for="gas">Gas Bill:</label>
-                        <input type="number" id="gas" placeholder="Enter gas bill">
-                    </div>
-                    <div>
-                        <label for="electricity">Electricity Bill:</label>
-                        <input type="number" id="electricity" placeholder="Enter electricity bill">
-                    </div>
-                    <div>
-                        <label for="other">Other Expenses:</label>
-                        <input type="number" id="other" placeholder="Enter other expenses">
-                    </div>
-                    <button onclick="calculateBalances()">Calculate Balances</button>
+        <div class="main-content">
+            <div class="header">
+                <h1 id="sectionTitle">Dashboard</h1>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <span id="usernameDisplay">Admin</span>
                 </div>
             </div>
             
-            <div class="panel" id="user-panel">
-                <h2>My Expenses</h2>
-                <div id="user-info">
-                    <p>Welcome, <span id="current-user"></span>!</p>
-                    <div id="change-password" class="hidden">
-                        <h3>Change Password</h3>
-                        <div>
-                            <label for="current-password">Current Password:</label>
-                            <input type="password" id="current-password" placeholder="Enter current password">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="section">
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                        </svg>
+                        Today's Summary
+                    </h3>
+                    <div class="card-grid">
+                        <div class="card">
+                            <h4>Cards Registered</h4>
+                            <p id="cardsRegisteredToday">0</p>
                         </div>
-                        <div>
-                            <label for="new-password">New Password:</label>
-                            <input type="password" id="new-password" placeholder="Enter new password">
+                        <div class="card">
+                            <h4>Cards Issued</h4>
+                            <p id="cardsIssuedToday">0</p>
                         </div>
-                        <div>
-                            <label for="confirm-password">Confirm Password:</label>
-                            <input type="password" id="confirm-password" placeholder="Confirm new password">
+                        <div class="card">
+                            <h4>Production Pieces</h4>
+                            <p id="productionToday">0</p>
                         </div>
-                        <button onclick="changePassword()">Update Password</button>
+                        <div class="card">
+                            <h4>Active Workers</h4>
+                            <p id="activeWorkers">0</p>
+                        </div>
                     </div>
                 </div>
                 
-                <h3>Add Market Expense</h3>
-                <div>
-                    <label for="market-amount">Amount:</label>
-                    <input type="number" id="market-amount" placeholder="Enter amount">
-                </div>
-                <div>
-                    <label for="market-date">Date:</label>
-                    <input type="date" id="market-date">
-                </div>
-                <button onclick="addMarketExpense()">Add Expense</button>
-                
-                <h3>My Market Expenses</h3>
-                <table id="my-expenses-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody id="my-expenses-body">
-                        <!-- Filled by JavaScript -->
-                    </tbody>
-                </table>
-                
-                <div id="my-result" class="result">
-                    <!-- Filled by JavaScript -->
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        </svg>
+                        Recent Activities
+                    </h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Activity</th>
+                                <th>User</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentActivities">
+                            <!-- Activities will be loaded here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
             
-            <div id="admin-panel" class="panel admin-panel hidden">
-                <h2>Admin Panel</h2>
-                <div>
-                    <h3>Add New User</h3>
-                    <div>
-                        <label for="new-username">Username:</label>
-                        <input type="text" id="new-username" placeholder="Enter username">
+            <!-- Card Registration Section -->
+            <div id="cardRegistration" class="section" style="display: none;">
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/>
+                            <path d="M8 14h8v-2H8v2zm0-3h8V9H8v2zm0-3h5V6H8v2z"/>
+                        </svg>
+                        Register New Card
+                    </h3>
+                    <div class="scanner-container">
+                        <video id="registration-scanner-video" class="scanner-video" playsinline></video>
+                        <div class="scanner-overlay">
+                            <div class="scanner-frame"></div>
+                        </div>
                     </div>
-                    <div>
-                        <label for="new-user-password">Password:</label>
-                        <input type="password" id="new-user-password" placeholder="Enter password">
-                    </div>
-                    <button onclick="addUser()">Add User</button>
+                    <p class="scan-status" id="registration-scan-status">Initializing scanner...</p>
+                    
+                    <form id="cardRegistrationForm" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label for="cardNumber">Card Number (RFID)</label>
+                            <input type="text" id="cardNumber" class="form-control" required readonly placeholder="Will be filled automatically from scanner">
+                        </div>
+                        <div class="form-group">
+                            <label for="workerId">Worker ID</label>
+                            <input type="text" id="workerId" class="form-control" required placeholder="Enter worker ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="workerName">Worker Name</label>
+                            <input type="text" id="workerName" class="form-control" required placeholder="Enter worker name">
+                        </div>
+                        <div class="form-group">
+                            <label for="workLine">Work Line</label>
+                            <select id="workLine" class="form-control" required>
+                                <option value="">Select work line</option>
+                                <option value="Line-101">Line-101</option>
+                                <option value="Line-102">Line-102</option>
+                                <option value="Line-103">Line-103</option>
+                                <option value="Swing-QC">Swing QC (145)</option>
+                                <option value="Line-Output">Line Output (111)</option>
+                                <option value="Finishing">Finishing (141)</option>
+                                <option value="Input">Input (70)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Register Card</button>
+                    </form>
                 </div>
                 
-                <h3>All Users</h3>
-                <table id="users-table">
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-body">
-                        <!-- Filled by JavaScript -->
-                    </tbody>
-                </table>
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 16H4V8h16v12z"/>
+                        </svg>
+                        Registered Cards
+                    </h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Card Number</th>
+                                <th>Worker ID</th>
+                                <th>Worker Name</th>
+                                <th>Work Line</th>
+                                <th>Registered Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registeredCardsList">
+                            <!-- Registered cards will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Lot Management Section (Admin Only) -->
+            <div id="lotManagement" class="section" style="display: none;">
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        </svg>
+                        Add New Lot
+                    </h3>
+                    <form id="lotForm">
+                        <div class="form-group">
+                            <label for="lotNumber">Lot Number</label>
+                            <input type="text" id="lotNumber" class="form-control" required placeholder="Enter lot number">
+                        </div>
+                        <div class="form-group">
+                            <label for="lotStyle">Style</label>
+                            <input type="text" id="lotStyle" class="form-control" required placeholder="Enter style">
+                        </div>
+                        <div class="form-group">
+                            <label for="lotSize">Size</label>
+                            <input type="text" id="lotSize" class="form-control" required placeholder="Enter size">
+                        </div>
+                        <div class="form-group">
+                            <label for="lotQuantity">Quantity</label>
+                            <input type="number" id="lotQuantity" class="form-control" required placeholder="Enter quantity">
+                        </div>
+                        <div class="form-group">
+                            <label for="lotTaskNo">Task No</label>
+                            <select id="lotTaskNo" class="form-control" required>
+                                <option value="">Select Task No</option>
+                                <option value="145">145 (Swing QC Output)</option>
+                                <option value="111">111 (Line Output)</option>
+                                <option value="141">141 (Finishing Output)</option>
+                                <option value="70">70 (Input)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Lot</button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 16H4V8h16v12z"/>
+                        </svg>
+                        Available Lots
+                    </h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Lot Number</th>
+                                <th>Style</th>
+                                <th>Size</th>
+                                <th>Quantity</th>
+                                <th>Task No</th>
+                                <th>Added Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lotList">
+                            <!-- Lot list will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Card Issue Section -->
+            <div id="cardIssue" class="section" style="display: none;">
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                        </svg>
+                        Issue Production Card
+                    </h3>
+                    <div class="scanner-container">
+                        <video id="issue-scanner-video" class="scanner-video" playsinline></video>
+                        <div class="scanner-overlay">
+                            <div class="scanner-frame"></div>
+                        </div>
+                    </div>
+                    <p class="scan-status" id="issue-scan-status">Initializing scanner...</p>
+                    
+                    <form id="cardIssueForm" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label for="issueCardNumber">Card Number</label>
+                            <input type="text" id="issueCardNumber" class="form-control" required readonly placeholder="Will be filled automatically from scanner">
+                        </div>
+                        <div class="form-group">
+                            <label for="issueLotNumber">Lot Number</label>
+                            <select id="issueLotNumber" class="form-control" required>
+                                <option value="">Select Lot Number</option>
+                                <!-- Lot options will be loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="issueStyle">Style</label>
+                            <input type="text" id="issueStyle" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="issueSize">Size</label>
+                            <input type="text" id="issueSize" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="issueQuantity">Quantity</label>
+                            <input type="number" id="issueQuantity" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="issueTaskNo">Task No</label>
+                            <input type="text" id="issueTaskNo" class="form-control" readonly>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Issue Card</button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 16H4V8h16v12z"/>
+                        </svg>
+                        Issued Cards
+                    </h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Card Number</th>
+                                <th>Lot Number</th>
+                                <th>Style</th>
+                                <th>Size</th>
+                                <th>Quantity</th>
+                                <th>Task No</th>
+                                <th>Issue Date</th>
+                                <th>Worker</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="issuedCardsList">
+                            <!-- Issued cards will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Worker Punch Section -->
+            <div id="workerPunch" class="section" style="display: none;">
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                        </svg>
+                        Worker Punch (Production Entry)
+                    </h3>
+                    <div class="scanner-container">
+                        <video id="punch-scanner-video" class="scanner-video" playsinline></video>
+                        <div class="scanner-overlay">
+                            <div class="scanner-frame"></div>
+                        </div>
+                    </div>
+                    <p class="scan-status" id="punch-scan-status">Initializing scanner...</p>
+                    
+                    <form id="workerPunchForm" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label for="punchCardNumber">Card Number</label>
+                            <input type="text" id="punchCardNumber" class="form-control" required readonly placeholder="Will be filled automatically from scanner">
+                        </div>
+                        <div class="form-group">
+                            <label for="punchWorkerId">Worker ID</label>
+                            <input type="text" id="punchWorkerId" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="punchWorkerName">Worker Name</label>
+                            <input type="text" id="punchWorkerName" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="punchWorkLine">Work Line</label>
+                            <input type="text" id="punchWorkLine" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="punchLotNumber">Lot Number</label>
+                            <input type="text" id="punchLotNumber" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="punchStyle">Style</label>
+                            <input type="text" id="punchStyle" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="punchSize">Size</label>
+                            <input type="text" id="punchSize" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="punchTaskNo">Task No</label>
+                            <input type="text" id="punchTaskNo" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="punchQuantity">Completed Quantity</label>
+                            <input type="number" id="punchQuantity" class="form-control" required placeholder="Enter completed quantity">
+                        </div>
+                        <button type="submit" class="btn btn-success">Record Production</button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        </svg>
+                        Today's Production
+                    </h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Worker</th>
+                                <th>Lot Number</th>
+                                <th>Style</th>
+                                <th>Size</th>
+                                <th>Task No</th>
+                                <th>Quantity</th>
+                                <th>Work Line</th>
+                            </tr>
+                        </thead>
+                        <tbody id="todayProduction">
+                            <!-- Today's production will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Production Tracking Section -->
+            <div id="productionTracking" class="section" style="display: none;">
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z"/>
+                        </svg>
+                        Track Production (40b)
+                    </h3>
+                    <div class="form-group">
+                        <label for="trackCardNumber">Enter Card Number to Track</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="trackCardNumber" class="form-control" placeholder="Scan or enter card number">
+                            <button onclick="trackProduction()" class="btn btn-primary">Track</button>
+                        </div>
+                    </div>
+                    
+                    <div id="trackingResults" style="margin-top: 20px;">
+                        <!-- Tracking results will be displayed here -->
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        </svg>
+                        Worker Productivity (RS01)
+                    </h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Worker ID</th>
+                                <th>Worker Name</th>
+                                <th>Work Line</th>
+                                <th>Today's Production</th>
+                                <th>Last Week Avg</th>
+                                <th>Efficiency</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workerProductivity">
+                            <!-- Worker productivity data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Reports Section -->
+            <div id="reports" class="section" style="display: none;">
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        </svg>
+                        Generate Reports
+                    </h3>
+                    <div class="card-grid">
+                        <div class="card">
+                            <h4>Worker Production Report (RS01)</h4>
+                            <p>Detailed production by worker</p>
+                            <div class="form-group mt-3">
+                                <label for="reportWorkerDate">Select Date</label>
+                                <input type="date" id="reportWorkerDate" class="form-control">
+                            </div>
+                            <button onclick="generateWorkerReport()" class="btn btn-primary" style="margin-top: 10px;">Generate</button>
+                        </div>
+                        <div class="card">
+                            <h4>Task No Production Report (RS08)</h4>
+                            <p>Daily production by Task No</p>
+                            <div class="form-group mt-3">
+                                <label for="reportTaskNoDate">Select Date</label>
+                                <input type="date" id="reportTaskNoDate" class="form-control">
+                            </div>
+                            <button onclick="generateTaskNoReport()" class="btn btn-primary" style="margin-top: 10px;">Generate</button>
+                        </div>
+                        <div class="card">
+                            <h4>Lot Progress Report (RS02)</h4>
+                            <p>Manufacturing order progress</p>
+                            <div class="form-group mt-3">
+                                <label for="reportLotNumber">Select Lot</label>
+                                <select id="reportLotNumber" class="form-control">
+                                    <option value="">All Lots</option>
+                                    <!-- Lot options will be loaded dynamically -->
+                                </select>
+                            </div>
+                            <button onclick="generateLotReport()" class="btn btn-primary" style="margin-top: 10px;">Generate</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-3" id="reportResultsContainer" style="display: none;">
+                        <h3 class="card-title">Report Results</h3>
+                        <div id="reportResults">
+                            <!-- Report results will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Management Section -->
+            <div id="userManagement" class="section" style="display: none;">
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                        </svg>
+                        User Management
+                    </h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Last Login</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userList">
+                            <!-- User list will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                        </svg>
+                        Add New User
+                    </h3>
+                    <form id="addUserForm">
+                        <div class="form-group">
+                            <label for="newUserId">User ID</label>
+                            <input type="text" id="newUserId" class="form-control" required placeholder="Enter user ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserName">Name</label>
+                            <input type="text" id="newUserName" class="form-control" required placeholder="Enter name">
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserPassword">Password</label>
+                            <input type="password" id="newUserPassword" class="form-control" required placeholder="Enter password">
+                        </div>
+                        <div class="form-group">
+                            <label for="newUserRole">Role</label>
+                            <select id="newUserRole" class="form-control" required>
+                                <option value="admin">Admin</option>
+                                <option value="supervisor">Supervisor</option>
+                                <option value="operator">Operator</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add User</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Custom admin and user data
+        // Database
         let users = [
-            { username: "aradmin", password: "127627", expenses: [] }, // Admin
-            { username: "Nazmul Islam", password: "123", expenses: [] },
-            { username: "Shahadat Hossain", password: "123", expenses: [] }
+            { id: "aradmin", password: "127627", name: "Admin", role: "admin", lastLogin: "" },
+            { id: "supervisor1", password: "123", name: "Production Supervisor", role: "supervisor", lastLogin: "" },
+            { id: "operator1", password: "123", name: "Line Operator", role: "operator", lastLogin: "" }
         ];
         
-        let currentUser = null;
-        let fixedExpenses = {
-            rent: 0,
-            gas: 0,
-            electricity: 0,
-            other: 0
-        };
+        let registeredCards = [];
+        let issuedCards = [];
+        let productionData = [];
+        let activities = [];
+        let lots = [];
         
-        // Check if there's saved data in localStorage
-        if (localStorage.getItem('roommateExpenses')) {
-            const savedData = JSON.parse(localStorage.getItem('roommateExpenses'));
-            users = savedData.users || users;
-            fixedExpenses = savedData.fixedExpenses || fixedExpenses;
+        let currentUser = null;
+        
+        // Initialize with sample data
+        function initializeSampleData() {
+            // Sample registered cards
+            registeredCards = [
+                { cardNumber: "RFID001", workerId: "W001", workerName: "Abdul Karim", workLine: "Line-101", registeredDate: "2025-08-01", status: "active" },
+                { cardNumber: "RFID002", workerId: "W002", workerName: "Rahima Begum", workLine: "Swing-QC", registeredDate: "2025-08-01", status: "active" },
+                { cardNumber: "RFID003", workerId: "W003", workerName: "Jamal Uddin", workLine: "Finishing", registeredDate: "2025-08-02", status: "active" }
+            ];
+            
+            // Sample lots
+            lots = [
+                { lotNumber: "LOT-2025-001", style: "STYLE-101", size: "M", quantity: 500, taskNo: "145", addedDate: "2025-08-01" },
+                { lotNumber: "LOT-2025-002", style: "STYLE-102", size: "L", quantity: 300, taskNo: "111", addedDate: "2025-08-02" },
+                { lotNumber: "LOT-2025-003", style: "STYLE-103", size: "XL", quantity: 200, taskNo: "141", addedDate: "2025-08-02" }
+            ];
+            
+            // Sample issued cards
+            issuedCards = [
+                { 
+                    cardNumber: "RFID002", 
+                    lotNumber: "LOT-2025-001", 
+                    style: "STYLE-101", 
+                    size: "M", 
+                    quantity: 50, 
+                    taskNo: "145",
+                    issueDate: "2025-08-02 09:15", 
+                    workerId: "W002", 
+                    workerName: "Rahima Begum" 
+                },
+                { 
+                    cardNumber: "RFID003", 
+                    lotNumber: "LOT-2025-002", 
+                    style: "STYLE-102", 
+                    size: "L", 
+                    quantity: 30, 
+                    taskNo: "111",
+                    issueDate: "2025-08-02 10:30", 
+                    workerId: "W003", 
+                    workerName: "Jamal Uddin" 
+                }
+            ];
+            
+            // Sample production data
+            productionData = [
+                { cardNumber: "RFID002", date: "2025-08-02", time: "09:30", pieces: 50, workerId: "W002", workerName: "Rahima Begum", workLine: "Swing-QC", lotNumber: "LOT-2025-001", style: "STYLE-101", size: "M", taskNo: "145" },
+                { cardNumber: "RFID003", date: "2025-08-02", time: "10:45", pieces: 30, workerId: "W003", workerName: "Jamal Uddin", workLine: "Finishing", lotNumber: "LOT-2025-002", style: "STYLE-102", size: "L", taskNo: "111" }
+            ];
+            
+            // Sample activities
+            activities = [
+                { time: "2025-08-02 09:15", activity: "Card Issued", user: "aradmin", details: "LOT-2025-001/STYLE-101" },
+                { time: "2025-08-02 10:30", activity: "Card Issued", user: "supervisor1", details: "LOT-2025-002/STYLE-102" },
+                { time: "2025-08-02 08:00", activity: "Card Registered", user: "aradmin", details: "RFID003 for Jamal Uddin" },
+                { time: "2025-08-02 09:30", activity: "Production Recorded", user: "operator1", details: "50 pieces by W002" },
+                { time: "2025-08-02 10:45", activity: "Production Recorded", user: "operator1", details: "30 pieces by W003" }
+            ];
         }
         
         // Login function
         function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const userId = document.getElementById("loginUserId").value;
+            const password = document.getElementById("loginPassword").value;
             
-            const user = users.find(u => u.username === username && u.password === password);
+            const user = users.find(u => u.id === userId && u.password === password);
             
             if (user) {
                 currentUser = user;
-                document.getElementById('login-container').classList.add('hidden');
-                document.getElementById('dashboard-container').classList.remove('hidden');
-                document.getElementById('current-user').textContent = currentUser.username;
+                user.lastLogin = new Date().toLocaleString();
                 
-                // Show admin panel if admin (username is 'aradmin')
-                if (user.username === "aradmin") {
-                    document.getElementById('admin-panel').classList.remove('hidden');
-                    document.getElementById('change-password').classList.remove('hidden');
-                } else {
-                    document.getElementById('change-password').classList.remove('hidden');
+                document.getElementById("loginScreen").style.display = "none";
+                document.getElementById("appContainer").style.display = "grid";
+                document.getElementById("usernameDisplay").textContent = user.name;
+                document.getElementById("userAvatar").textContent = user.name.charAt(0);
+                
+                // Initialize sample data if empty
+                if (registeredCards.length === 0) {
+                    initializeSampleData();
                 }
                 
+                // Load menu based on user role
+                loadMenu();
+                
+                // Load data
+                loadRegisteredCards();
+                loadLots();
+                loadIssuedCards();
+                loadActivities();
+                loadTodayProduction();
                 updateDashboard();
+                loadUserList();
+                
+                // Initialize scanners
+                initScanners();
+                
+                showSection('dashboard');
             } else {
-                alert('Invalid username or password');
+                alert("Invalid User ID or Password!");
+            }
+        }
+        
+        // Load menu based on user role
+        function loadMenu() {
+            const menu = document.getElementById("mainMenu");
+            menu.innerHTML = '';
+            
+            // Always show dashboard
+            menu.appendChild(createMenuItem('dashboard', 'Dashboard', 'M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z'));
+            
+            // Card registration (admin and supervisor)
+            if (currentUser.role === 'admin' || currentUser.role === 'supervisor') {
+                menu.appendChild(createMenuItem('cardRegistration', 'Card Registration', 'M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zM8 14h8v-2H8v2zm0-3h8V9H8v2zm0-3h5V6H8v2z'));
+            }
+            
+            // Lot management (admin only)
+            if (currentUser.role === 'admin') {
+                menu.appendChild(createMenuItem('lotManagement', 'Lot Management', 'M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z'));
+            }
+            
+            // Card issue (admin and supervisor)
+            if (currentUser.role === 'admin' || currentUser.role === 'supervisor') {
+                menu.appendChild(createMenuItem('cardIssue', 'Card Issue', 'M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z'));
+            }
+            
+            // Worker punch (all users)
+            menu.appendChild(createMenuItem('workerPunch', 'Worker Punch', 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'));
+            
+            // Production tracking (all users)
+            menu.appendChild(createMenuItem('productionTracking', 'Production Tracking', 'M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5s1.12 2.5 2.5 2.5zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z'));
+            
+            // Reports (admin and supervisor)
+            if (currentUser.role === 'admin' || currentUser.role === 'supervisor') {
+                menu.appendChild(createMenuItem('reports', 'Reports', 'M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z'));
+            }
+            
+            // User management (admin only)
+            if (currentUser.role === 'admin') {
+                menu.appendChild(createMenuItem('userManagement', 'User Management', 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'));
+            }
+            
+            // Logout
+            menu.appendChild(createMenuItem('logout', 'Logout', 'M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z', true));
+        }
+        
+        // Create menu item
+        function createMenuItem(sectionId, text, svgPath, isLogout = false) {
+            const li = document.createElement("li");
+            li.className = "menu-item";
+            if (isLogout) {
+                li.setAttribute("onclick", "logout()");
+            } else {
+                li.setAttribute("onclick", `showSection('${sectionId}')`);
+            }
+            
+            li.innerHTML = `
+                <svg viewBox="0 0 24 24">
+                    <path d="${svgPath}"/>
+                </svg>
+                <span>${text}</span>
+            `;
+            
+            return li;
+        }
+        
+        // Initialize scanners
+        function initScanners() {
+            // For demo purposes, we'll simulate scanner initialization
+            document.getElementById("registration-scan-status").textContent = "Scanner ready - simulate scan with 'S' key";
+            document.getElementById("issue-scan-status").textContent = "Scanner ready - simulate scan with 'S' key";
+            document.getElementById("punch-scan-status").textContent = "Scanner ready - simulate scan with 'S' key";
+            
+            // Add keyboard listener for demo scanning
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 's' || e.key === 'S') {
+                    simulateScan();
+                }
+            });
+        }
+        
+        // Simulate scanner for demo purposes
+        function simulateScan() {
+            const activeSection = document.querySelector('.section[style="display: block;"]').id;
+            
+            if (activeSection === 'cardRegistration') {
+                const cardNumber = "RFID" + Math.floor(1000 + Math.random() * 9000);
+                document.getElementById("cardNumber").value = cardNumber;
+                document.getElementById("registration-scan-status").textContent = `Card scanned: ${cardNumber}`;
+                document.getElementById("registration-scan-status").style.color = "var(--success)";
+            }
+            else if (activeSection === 'cardIssue') {
+                const activeCards = registeredCards.filter(card => card.status === "active");
+                if (activeCards.length > 0) {
+                    const randomCard = activeCards[Math.floor(Math.random() * activeCards.length)];
+                    document.getElementById("issueCardNumber").value = randomCard.cardNumber;
+                    document.getElementById("issue-scan-status").textContent = `Card scanned: ${randomCard.cardNumber} (${randomCard.workerName})`;
+                    document.getElementById("issue-scan-status").style.color = "var(--success)";
+                }
+            }
+            else if (activeSection === 'workerPunch') {
+                const issuedActiveCards = issuedCards.filter(card => {
+                    const registeredCard = registeredCards.find(rc => rc.cardNumber === card.cardNumber);
+                    return registeredCard && registeredCard.status === "active";
+                });
+                
+                if (issuedActiveCards.length > 0) {
+                    const randomCard = issuedActiveCards[Math.floor(Math.random() * issuedActiveCards.length)];
+                    document.getElementById("punchCardNumber").value = randomCard.cardNumber;
+                    
+                    const registeredCard = registeredCards.find(rc => rc.cardNumber === randomCard.cardNumber);
+                    if (registeredCard) {
+                        document.getElementById("punchWorkerId").value = registeredCard.workerId;
+                        document.getElementById("punchWorkerName").value = registeredCard.workerName;
+                        document.getElementById("punchWorkLine").value = registeredCard.workLine;
+                    }
+                    
+                    document.getElementById("punchLotNumber").value = randomCard.lotNumber;
+                    document.getElementById("punchStyle").value = randomCard.style;
+                    document.getElementById("punchSize").value = randomCard.size;
+                    document.getElementById("punchTaskNo").value = randomCard.taskNo;
+                    
+                    document.getElementById("punch-scan-status").textContent = `Card scanned: ${randomCard.cardNumber}`;
+                    document.getElementById("punch-scan-status").style.color = "var(--success)";
+                }
             }
         }
         
         // Logout function
         function logout() {
             currentUser = null;
-            document.getElementById('login-container').classList.remove('hidden');
-            document.getElementById('dashboard-container').classList.add('hidden');
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
+            document.getElementById("appContainer").style.display = "none";
+            document.getElementById("loginScreen").style.display = "flex";
+            document.getElementById("loginUserId").value = "";
+            document.getElementById("loginPassword").value = "";
         }
         
-        // Add market expense
-        function addMarketExpense() {
-            const amount = parseFloat(document.getElementById('market-amount').value);
-            const date = document.getElementById('market-date').value || new Date().toISOString().split('T')[0];
-            
-            if (isNaN(amount) || amount <= 0) {
-                alert('Please enter a valid amount');
+        // Show section function
+        function showSection(sectionId) {
+            if (sectionId === 'logout') {
+                logout();
                 return;
             }
             
-            currentUser.expenses.push({ date, amount });
-            saveData();
-            updateDashboard();
+            document.querySelectorAll(".section").forEach(section => {
+                section.style.display = "none";
+            });
+            document.getElementById(sectionId).style.display = "block";
             
-            // Clear input fields
-            document.getElementById('market-amount').value = '';
+            // Update active menu item
+            document.querySelectorAll(".menu-item").forEach(item => {
+                item.classList.remove("active");
+            });
+            document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.add("active");
+            
+            // Update section title
+            const titles = {
+                "dashboard": "Dashboard",
+                "cardRegistration": "Card Registration",
+                "lotManagement": "Lot Management",
+                "cardIssue": "Card Issue",
+                "workerPunch": "Worker Punch",
+                "productionTracking": "Production Tracking",
+                "reports": "Reports",
+                "userManagement": "User Management"
+            };
+            document.getElementById("sectionTitle").textContent = titles[sectionId];
+            
+            // Load specific data when section changes
+            if (sectionId === 'cardIssue') {
+                loadLotOptions();
+            }
+            else if (sectionId === 'reports') {
+                loadReportLotOptions();
+            }
         }
         
-        // Calculate balances
-        function calculateBalances() {
-            fixedExpenses.rent = parseFloat(document.getElementById('rent').value) || 0;
-            fixedExpenses.gas = parseFloat(document.getElementById('gas').value) || 0;
-            fixedExpenses.electricity = parseFloat(document.getElementById('electricity').value) || 0;
-            fixedExpenses.other = parseFloat(document.getElementById('other').value) || 0;
+        // Load registered cards
+        function loadRegisteredCards() {
+            const tbody = document.getElementById("registeredCardsList");
+            tbody.innerHTML = "";
             
-            saveData();
-            updateDashboard();
+            registeredCards.forEach(card => {
+                const row = document.createElement("tr");
+                
+                row.innerHTML = `
+                    <td>${card.cardNumber}</td>
+                    <td>${card.workerId}</td>
+                    <td>${card.workerName}</td>
+                    <td>${card.workLine}</td>
+                    <td>${card.registeredDate}</td>
+                    <td><span class="badge ${card.status === 'active' ? 'badge-success' : 'badge-danger'}">${card.status}</span></td>
+                    <td>
+                        ${currentUser.role === "admin" ? `<button class="btn btn-danger" onclick="deactivateCard('${card.cardNumber}')">Deactivate</button>` : 'View Only'}
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
         }
         
-        // Add new user (admin only)
-        function addUser() {
-            const username = document.getElementById('new-username').value.trim();
-            const password = document.getElementById('new-user-password').value;
+        // Load lots
+        function loadLots() {
+            const tbody = document.getElementById("lotList");
+            tbody.innerHTML = "";
             
-            if (!username || !password) {
-                alert('Please enter both username and password');
-                return;
-            }
-            
-            if (users.some(u => u.username === username)) {
-                alert('Username already exists');
-                return;
-            }
-            
-            users.push({ username, password, expenses: [] });
-            saveData();
-            updateDashboard();
-            
-            // Clear input fields
-            document.getElementById('new-username').value = '';
-            document.getElementById('new-user-password').value = '';
+            lots.forEach(lot => {
+                const row = document.createElement("tr");
+                
+                row.innerHTML = `
+                    <td>${lot.lotNumber}</td>
+                    <td>${lot.style}</td>
+                    <td>${lot.size}</td>
+                    <td>${lot.quantity}</td>
+                    <td><span class="badge ${getTaskNoClass(lot.taskNo)}">${lot.taskNo}</span></td>
+                    <td>${lot.addedDate}</td>
+                    <td>
+                        ${currentUser.role === "admin" ? `<button class="btn btn-danger" onclick="deleteLot('${lot.lotNumber}')">Delete</button>` : 'View Only'}
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
         }
         
-        // Change password
-        function changePassword() {
-            const currentPassword = document.getElementById('current-password').value;
-            const newPassword = document.getElementById('new-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            
-            if (currentUser.password !== currentPassword) {
-                alert('Current password is incorrect');
-                return;
+        // Get task no class for styling
+        function getTaskNoClass(taskNo) {
+            switch(taskNo) {
+                case '145': return 'task-145';
+                case '111': return 'task-111';
+                case '141': return 'task-141';
+                case '70': return 'task-70';
+                default: return 'badge-primary';
             }
-            
-            if (newPassword !== confirmPassword) {
-                alert('New passwords do not match');
-                return;
-            }
-            
-            if (newPassword.length < 3) {
-                alert('Password must be at least 3 characters');
-                return;
-            }
-            
-            currentUser.password = newPassword;
-            saveData();
-            alert('Password changed successfully');
-            
-            // Clear input fields
-            document.getElementById('current-password').value = '';
-            document.getElementById('new-password').value = '';
-            document.getElementById('confirm-password').value = '';
         }
         
-        // Update the dashboard
-        function updateDashboard() {
-            // Update expenses table
-            const expensesBody = document.getElementById('expenses-body');
-            expensesBody.innerHTML = '';
+        // Load lot options for card issue
+        function loadLotOptions() {
+            const select = document.getElementById("issueLotNumber");
+            select.innerHTML = '<option value="">Select Lot Number</option>';
+            
+            lots.forEach(lot => {
+                const option = document.createElement("option");
+                option.value = lot.lotNumber;
+                option.textContent = lot.lotNumber;
+                select.appendChild(option);
+            });
+        }
+        
+        // Load lot options for reports
+        function loadReportLotOptions() {
+            const select = document.getElementById("reportLotNumber");
+            select.innerHTML = '<option value="">All Lots</option>';
+            
+            lots.forEach(lot => {
+                const option = document.createElement("option");
+                option.value = lot.lotNumber;
+                option.textContent = `${lot.lotNumber} (${lot.style})`;
+                select.appendChild(option);
+            });
+        }
+        
+        // Update lot details when lot is selected
+        document.getElementById("issueLotNumber").addEventListener("change", function() {
+            const lotNumber = this.value;
+            const lot = lots.find(l => l.lotNumber === lotNumber);
+            
+            if (lot) {
+                document.getElementById("issueStyle").value = lot.style;
+                document.getElementById("issueSize").value = lot.size;
+                document.getElementById("issueQuantity").value = lot.quantity;
+                document.getElementById("issueTaskNo").value = lot.taskNo;
+            } else {
+                document.getElementById("issueStyle").value = "";
+                document.getElementById("issueSize").value = "";
+                document.getElementById("issueQuantity").value = "";
+                document.getElementById("issueTaskNo").value = "";
+            }
+        });
+        
+        // Load issued cards
+        function loadIssuedCards() {
+            const tbody = document.getElementById("issuedCardsList");
+            tbody.innerHTML = "";
+            
+            issuedCards.forEach(card => {
+                const row = document.createElement("tr");
+                
+                row.innerHTML = `
+                    <td>${card.cardNumber}</td>
+                    <td>${card.lotNumber}</td>
+                    <td>${card.style}</td>
+                    <td>${card.size}</td>
+                    <td>${card.quantity}</td>
+                    <td><span class="badge ${getTaskNoClass(card.taskNo)}">${card.taskNo}</span></td>
+                    <td>${card.issueDate}</td>
+                    <td>${card.workerName}</td>
+                    <td>
+                        ${currentUser.role === "admin" ? `<button class="btn btn-danger" onclick="cancelIssue('${card.cardNumber}', '${card.lotNumber}')">Cancel</button>` : 'View Only'}
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Load today's production
+        function loadTodayProduction() {
+            const tbody = document.getElementById("todayProduction");
+            tbody.innerHTML = "";
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayProductions = productionData.filter(prod => prod.date === today);
+            
+            todayProductions.forEach(prod => {
+                const row = document.createElement("tr");
+                
+                row.innerHTML = `
+                    <td>${prod.time}</td>
+                    <td>${prod.workerName} (${prod.workerId})</td>
+                    <td>${prod.lotNumber}</td>
+                    <td>${prod.style}</td>
+                    <td>${prod.size}</td>
+                    <td><span class="badge ${getTaskNoClass(prod.taskNo)}">${prod.taskNo}</span></td>
+                    <td>${prod.pieces}</td>
+                    <td>${prod.workLine}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Load activities
+        function loadActivities() {
+            const tbody = document.getElementById("recentActivities");
+            tbody.innerHTML = "";
+            
+            // Show only recent 5 activities
+            const recentActivities = activities.slice(0, 5);
+            
+            recentActivities.forEach(activity => {
+                const row = document.createElement("tr");
+                
+                row.innerHTML = `
+                    <td>${activity.time}</td>
+                    <td>${activity.activity}</td>
+                    <td>${activity.user}</td>
+                    <td>${activity.details}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Load user list
+        function loadUserList() {
+            const tbody = document.getElementById("userList");
+            tbody.innerHTML = "";
             
             users.forEach(user => {
-                const totalExpense = user.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+                const row = document.createElement("tr");
                 
-                const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${user.username}</td>
-                    <td>${totalExpense.toFixed(2)}</td>
-                    <td></td>
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.role}</td>
+                    <td>${user.lastLogin || 'Never'}</td>
+                    <td><span class="badge badge-success">Active</span></td>
+                    <td>
+                        ${currentUser.id !== user.id && currentUser.role === "admin" ? 
+                          `<button class="btn btn-danger" onclick="deleteUser('${user.id}')">Delete</button>` : 
+                          `<em>No Action</em>`}
+                    </td>
                 `;
-                expensesBody.appendChild(row);
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Update dashboard
+        function updateDashboard() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Cards registered today
+            const cardsRegisteredToday = registeredCards.filter(card => card.registeredDate === today).length;
+            document.getElementById("cardsRegisteredToday").textContent = cardsRegisteredToday;
+            
+            // Cards issued today
+            const cardsIssuedToday = issuedCards.filter(card => card.issueDate.startsWith(today)).length;
+            document.getElementById("cardsIssuedToday").textContent = cardsIssuedToday;
+            
+            // Production today
+            const productionToday = productionData.filter(prod => prod.date === today)
+                                                 .reduce((sum, prod) => sum + prod.pieces, 0);
+            document.getElementById("productionToday").textContent = productionToday;
+            
+            // Active workers
+            const activeWorkers = new Set(productionData.filter(prod => prod.date === today)
+                                                       .map(prod => prod.workerId)).size;
+            document.getElementById("activeWorkers").textContent = activeWorkers;
+        }
+        
+        // Register new card
+        document.getElementById("cardRegistrationForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const cardNumber = document.getElementById("cardNumber").value;
+            const workerId = document.getElementById("workerId").value;
+            const workerName = document.getElementById("workerName").value;
+            const workLine = document.getElementById("workLine").value;
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Check if card already registered
+            if (registeredCards.some(card => card.cardNumber === cardNumber)) {
+                alert("This card is already registered!");
+                return;
+            }
+            
+            // Add new card
+            registeredCards.push({
+                cardNumber,
+                workerId,
+                workerName,
+                workLine,
+                registeredDate: today,
+                status: "active"
             });
             
-            // Update my expenses table
-            if (currentUser) {
-                const myExpensesBody = document.getElementById('my-expenses-body');
-                myExpensesBody.innerHTML = '';
+            // Add activity
+            activities.unshift({
+                time: new Date().toLocaleString(),
+                activity: "Card Registered",
+                user: currentUser.id,
+                details: `${cardNumber} for ${workerName}`
+            });
+            
+            // Reset form
+            this.reset();
+            document.getElementById("registration-scan-status").textContent = "Ready to scan next card...";
+            document.getElementById("registration-scan-status").style.color = "var(--secondary)";
+            
+            // Reload data
+            loadRegisteredCards();
+            loadActivities();
+            updateDashboard();
+            
+            alert("Card registered successfully!");
+        });
+        
+        // Add new lot
+        document.getElementById("lotForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const lotNumber = document.getElementById("lotNumber").value;
+            const style = document.getElementById("lotStyle").value;
+            const size = document.getElementById("lotSize").value;
+            const quantity = document.getElementById("lotQuantity").value;
+            const taskNo = document.getElementById("lotTaskNo").value;
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Check if lot already exists
+            if (lots.some(lot => lot.lotNumber === lotNumber)) {
+                alert("This lot number already exists!");
+                return;
+            }
+            
+            // Add new lot
+            lots.push({
+                lotNumber,
+                style,
+                size,
+                quantity,
+                taskNo,
+                addedDate: today
+            });
+            
+            // Add activity
+            activities.unshift({
+                time: new Date().toLocaleString(),
+                activity: "Lot Added",
+                user: currentUser.id,
+                details: `${lotNumber} (${style})`
+            });
+            
+            // Reset form
+            this.reset();
+            
+            // Reload data
+            loadLots();
+            loadActivities();
+            
+            alert("Lot added successfully!");
+        });
+        
+        // Issue card
+        document.getElementById("cardIssueForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const cardNumber = document.getElementById("issueCardNumber").value;
+            
+            
+            
+            
+            
+            
+            
+            const lotNumber = document.getElementById("issueLotNumber").value;
+            const lot = lots.find(l => l.lotNumber === lotNumber);
+            
+            if (!lot) {
+                alert("Please select a valid lot!");
+                return;
+            }
+            
+            // Check if card is registered and active
+            const card = registeredCards.find(c => c.cardNumber === cardNumber && c.status === "active");
+            if (!card) {
+                alert("This card is not registered or inactive!");
+                return;
+            }
+            
+            // Check if card is already issued
+            if (issuedCards.some(ic => ic.cardNumber === cardNumber)) {
+                alert("This card is already issued!");
+                return;
+            }
+            
+            // Issue card
+            issuedCards.push({
+                cardNumber,
+                lotNumber: lot.lotNumber,
+                style: lot.style,
+                size: lot.size,
+                quantity: lot.quantity,
+                taskNo: lot.taskNo,
+                issueDate: new Date().toLocaleString(),
+                workerId: card.workerId,
+                workerName: card.workerName
+            });
+            
+            // Add activity
+            activities.unshift({
+                time: new Date().toLocaleString(),
+                activity: "Card Issued",
+                user: currentUser.id,
+                details: `${lotNumber}/${lot.style}`
+            });
+            
+            // Reset form
+            this.reset();
+            document.getElementById("issue-scan-status").textContent = "Ready to scan next card...";
+            document.getElementById("issue-scan-status").style.color = "var(--secondary)";
+            
+            // Reload data
+            loadIssuedCards();
+            loadActivities();
+            updateDashboard();
+            
+            alert("Card issued successfully!");
+        });
+        
+        // Worker punch form
+        document.getElementById("workerPunchForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const cardNumber = document.getElementById("punchCardNumber").value;
+            const quantity = document.getElementById("punchQuantity").value;
+            
+            // Find issued card
+            const issuedCard = issuedCards.find(ic => ic.cardNumber === cardNumber);
+            if (!issuedCard) {
+                alert("This card is not issued!");
+                return;
+            }
+            
+            // Find registered card
+            const registeredCard = registeredCards.find(rc => rc.cardNumber === cardNumber);
+            if (!registeredCard) {
+                alert("Card registration not found!");
+                return;
+            }
+            
+            // Record production
+            const now = new Date();
+            const date = now.toISOString().split('T')[0];
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            productionData.unshift({
+                cardNumber,
+                date,
+                time,
+                pieces: quantity,
+                workerId: registeredCard.workerId,
+                workerName: registeredCard.workerName,
+                workLine: registeredCard.workLine,
+                lotNumber: issuedCard.lotNumber,
+                style: issuedCard.style,
+                size: issuedCard.size,
+                taskNo: issuedCard.taskNo
+            });
+            
+            // Add activity
+            activities.unshift({
+                time: now.toLocaleString(),
+                activity: "Production Recorded",
+                user: currentUser.id,
+                details: `${quantity} pieces by ${registeredCard.workerId}`
+            });
+            
+            // Reset form
+            this.reset();
+            document.getElementById("punch-scan-status").textContent = "Ready to scan next card...";
+            document.getElementById("punch-scan-status").style.color = "var(--secondary)";
+            
+            // Reload data
+            loadTodayProduction();
+            loadActivities();
+            updateDashboard();
+            
+            alert("Production recorded successfully!");
+        });
+        
+        // Track production
+        function trackProduction() {
+            const cardNumber = document.getElementById("trackCardNumber").value;
+            const resultsContainer = document.getElementById("trackingResults");
+            
+            // Find all productions for this card
+            const productions = productionData.filter(prod => prod.cardNumber === cardNumber);
+            
+            if (productions.length === 0) {
+                resultsContainer.innerHTML = `<div class="alert alert-danger">No production found for this card</div>`;
+                return;
+            }
+            
+            // Find card info
+            const registeredCard = registeredCards.find(rc => rc.cardNumber === cardNumber);
+            const issuedCard = issuedCards.find(ic => ic.cardNumber === cardNumber);
+            
+            let html = `
+                <div class="card">
+                    <h4>Card Tracking Results</h4>
+                    <table class="data-table">
+                        <tr>
+                            <th>Card Number:</th>
+                            <td>${cardNumber}</td>
+                        </tr>
+                        ${registeredCard ? `
+                        <tr>
+                            <th>Worker:</th>
+                            <td>${registeredCard.workerName} (${registeredCard.workerId})</td>
+                        </tr>
+                        <tr>
+                            <th>Work Line:</th>
+                            <td>${registeredCard.workLine}</td>
+                        </tr>
+                        ` : ''}
+                        ${issuedCard ? `
+                        <tr>
+                            <th>Lot Number:</th>
+                            <td>${issuedCard.lotNumber}</td>
+                        </tr>
+                        <tr>
+                            <th>Style:</th>
+                            <td>${issuedCard.style}</td>
+                        </tr>
+                        <tr>
+                            <th>Size:</th>
+                            <td>${issuedCard.size}</td>
+                        </tr>
+                        <tr>
+                            <th>Task No:</th>
+                            <td>${issuedCard.taskNo}</td>
+                        </tr>
+                        ` : ''}
+                    </table>
+                    
+                    <h5 style="margin-top: 20px;">Production History</h5>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Pieces</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            productions.forEach(prod => {
+                html += `
+                    <tr>
+                        <td>${prod.date}</td>
+                        <td>${prod.time}</td>
+                        <td>${prod.pieces}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            resultsContainer.innerHTML = html;
+        }
+        
+        // Generate worker report
+        function generateWorkerReport() {
+            const date = document.getElementById("reportWorkerDate").value;
+            const resultsContainer = document.getElementById("reportResults");
+            
+            if (!date) {
+                alert("Please select a date!");
+                return;
+            }
+            
+            // Filter productions for selected date
+            const dateProductions = productionData.filter(prod => prod.date === date);
+            
+            if (dateProductions.length === 0) {
+                resultsContainer.innerHTML = `<div class="alert alert-info">No production data found for ${date}</div>`;
+                document.getElementById("reportResultsContainer").style.display = "block";
+                return;
+            }
+            
+            // Group by worker
+            const workerMap = new Map();
+            
+            dateProductions.forEach(prod => {
+                if (!workerMap.has(prod.workerId)) {
+                    workerMap.set(prod.workerId, {
+                        workerId: prod.workerId,
+                        workerName: prod.workerName,
+                        totalPieces: 0,
+                        workLine: prod.workLine,
+                        productions: []
+                    });
+                }
                 
-                currentUser.expenses.forEach(exp => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${exp.date}</td>
-                        <td>${exp.amount.toFixed(2)}</td>
+                const workerData = workerMap.get(prod.workerId);
+                workerData.totalPieces += parseInt(prod.pieces);
+                workerData.productions.push(prod);
+            });
+            
+            // Generate report
+            let html = `
+                <div class="card">
+                    <h4>Worker Production Report (RS01) - ${date}</h4>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Worker ID</th>
+                                <th>Worker Name</th>
+                                <th>Work Line</th>
+                                <th>Total Pieces</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            workerMap.forEach(workerData => {
+                html += `
+                    <tr>
+                        <td>${workerData.workerId}</td>
+                        <td>${workerData.workerName}</td>
+                        <td>${workerData.workLine}</td>
+                        <td>${workerData.totalPieces}</td>
+                        <td>
+                            <button class="btn btn-info" onclick="showWorkerDetails('${workerData.workerId}', '${date}')">View Details</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            resultsContainer.innerHTML = html;
+            document.getElementById("reportResultsContainer").style.display = "block";
+        }
+        
+        // Show worker details
+        function showWorkerDetails(workerId, date) {
+            const workerProductions = productionData.filter(prod => 
+                prod.workerId === workerId && prod.date === date
+            );
+            
+            const worker = registeredCards.find(rc => rc.workerId === workerId);
+            
+            let html = `
+                <div class="card">
+                    <h4>Production Details for ${worker ? worker.workerName : workerId} - ${date}</h4>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Lot Number</th>
+                                <th>Style</th>
+                                <th>Size</th>
+                                <th>Task No</th>
+                                <th>Pieces</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            workerProductions.forEach(prod => {
+                html += `
+                    <tr>
+                        <td>${prod.time}</td>
+                        <td>${prod.lotNumber}</td>
+                        <td>${prod.style}</td>
+                        <td>${prod.size}</td>
+                        <td>${prod.taskNo}</td>
+                        <td>${prod.pieces}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                    <button class="btn btn-primary" onclick="generateWorkerReport()" style="margin-top: 10px;">Back to Report</button>
+                </div>
+            `;
+            
+            document.getElementById("reportResults").innerHTML = html;
+        }
+        
+        // Generate task no report
+        function generateTaskNoReport() {
+            const date = document.getElementById("reportTaskNoDate").value;
+            const resultsContainer = document.getElementById("reportResults");
+            
+            if (!date) {
+                alert("Please select a date!");
+                return;
+            }
+            
+            // Filter productions for selected date
+            const dateProductions = productionData.filter(prod => prod.date === date);
+            
+            if (dateProductions.length === 0) {
+                resultsContainer.innerHTML = `<div class="alert alert-info">No production data found for ${date}</div>`;
+                document.getElementById("reportResultsContainer").style.display = "block";
+                return;
+            }
+            
+            // Group by task no
+            const taskMap = new Map();
+            
+            dateProductions.forEach(prod => {
+                if (!taskMap.has(prod.taskNo)) {
+                    taskMap.set(prod.taskNo, {
+                        taskNo: prod.taskNo,
+                        totalPieces: 0,
+                        productions: []
+                    });
+                }
+                
+                const taskData = taskMap.get(prod.taskNo);
+                taskData.totalPieces += parseInt(prod.pieces);
+                taskData.productions.push(prod);
+            });
+            
+            // Generate report
+            let html = `
+                <div class="card">
+                    <h4>Task No Production Report (RS08) - ${date}</h4>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Task No</th>
+                                <th>Total Pieces</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            taskMap.forEach(taskData => {
+                html += `
+                    <tr>
+                        <td><span class="badge ${getTaskNoClass(taskData.taskNo)}">${taskData.taskNo}</span></td>
+                        <td>${taskData.totalPieces}</td>
+                        <td>
+                            <button class="btn btn-info" onclick="showTaskDetails('${taskData.taskNo}', '${date}')">View Details</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            resultsContainer.innerHTML = html;
+            document.getElementById("reportResultsContainer").style.display = "block";
+        }
+        
+        // Show task details
+        function showTaskDetails(taskNo, date) {
+            const taskProductions = productionData.filter(prod => 
+                prod.taskNo === taskNo && prod.date === date
+            );
+            
+            let html = `
+                <div class="card">
+                    <h4>Production Details for Task No ${taskNo} - ${date}</h4>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Worker</th>
+                                <th>Lot Number</th>
+                                <th>Style</th>
+                                <th>Size</th>
+                                <th>Pieces</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            taskProductions.forEach(prod => {
+                html += `
+                    <tr>
+                        <td>${prod.time}</td>
+                        <td>${prod.workerName} (${prod.workerId})</td>
+                        <td>${prod.lotNumber}</td>
+                        <td>${prod.style}</td>
+                        <td>${prod.size}</td>
+                        <td>${prod.pieces}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                    <button class="btn btn-primary" onclick="generateTaskNoReport()" style="margin-top: 10px;">Back to Report</button>
+                </div>
+            `;
+            
+            document.getElementById("reportResults").innerHTML = html;
+        }
+        
+        // Generate lot report
+        function generateLotReport() {
+            const lotNumber = document.getElementById("reportLotNumber").value;
+            const resultsContainer = document.getElementById("reportResults");
+            
+            if (!lotNumber) {
+                // Show report for all lots
+                let html = `
+                    <div class="card">
+                        <h4>Lot Progress Report (RS02) - All Lots</h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Lot Number</th>
+                                    <th>Style</th>
+                                    <th>Size</th>
+                                    <th>Total Quantity</th>
+                                    <th>Completed</th>
+                                    <th>Progress</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                lots.forEach(lot => {
+                    const lotProductions = productionData.filter(prod => prod.lotNumber === lot.lotNumber);
+                    const totalCompleted = lotProductions.reduce((sum, prod) => sum + parseInt(prod.pieces), 0);
+                    const progress = Math.min(100, Math.round((totalCompleted / lot.quantity) * 100));
+                    
+                    html += `
+                        <tr>
+                            <td>${lot.lotNumber}</td>
+                            <td>${lot.style}</td>
+                            <td>${lot.size}</td>
+                            <td>${lot.quantity}</td>
+                            <td>${totalCompleted}</td>
+                            <td>
+                                <div style="background-color: #eee; width: 100%; height: 20px; border-radius: 4px;">
+                                    <div style="background-color: ${progress < 50 ? '#f39c12' : progress < 80 ? '#3498db' : '#27ae60'}; 
+                                        width: ${progress}%; height: 100%; border-radius: 4px; text-align: center; color: white; font-size: 12px; line-height: 20px;">
+                                        ${progress}%
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-info" onclick="showLotDetails('${lot.lotNumber}')">View Details</button>
+                            </td>
+                        </tr>
                     `;
-                    myExpensesBody.appendChild(row);
                 });
                 
-                // Calculate and display my balance if fixed expenses are set
-                const totalFixedExpenses = fixedExpenses.rent + fixedExpenses.gas + fixedExpenses.electricity + fixedExpenses.other;
-                if (totalFixedExpenses > 0) {
-                    const myTotalExpense = currentUser.expenses.reduce((sum, exp) => sum + exp.amount, 0);
-                    const perPersonShare = totalFixedExpenses / users.length;
-                    const balance = perPersonShare - myTotalExpense;
-                    
-                    const resultDiv = document.getElementById('my-result');
-                    resultDiv.textContent = `Balance: ${Math.abs(balance).toFixed(2)} ${balance >= 0 ? 'Pawana (You will get)' : 'Dena (You will pay)'}`;
-                    resultDiv.className = balance >= 0 ? 'result positive' : 'result negative';
-                }
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                resultsContainer.innerHTML = html;
+                document.getElementById("reportResultsContainer").style.display = "block";
+                return;
             }
             
-            // Update users table in admin panel
-            const usersBody = document.getElementById('users-body');
-            usersBody.innerHTML = '';
+            // Show report for specific lot
+            const lot = lots.find(l => l.lotNumber === lotNumber);
+            if (!lot) {
+                alert("Lot not found!");
+                return;
+            }
             
-            users.forEach(user => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${user.username}</td>
-                    <td><button onclick="deleteUser('${user.username}')">Delete</button></td>
+            const lotProductions = productionData.filter(prod => prod.lotNumber === lotNumber);
+            const totalCompleted = lotProductions.reduce((sum, prod) => sum + parseInt(prod.pieces), 0);
+            const progress = Math.min(100, Math.round((totalCompleted / lot.quantity) * 100));
+            
+            let html = `
+                <div class="card">
+                    <h4>Lot Progress Report (RS02) - ${lotNumber}</h4>
+                    <table class="data-table">
+                        <tr>
+                            <th>Lot Number:</th>
+                            <td>${lot.lotNumber}</td>
+                        </tr>
+                        <tr>
+                            <th>Style:</th>
+                            <td>${lot.style}</td>
+                        </tr>
+                        <tr>
+                            <th>Size:</th>
+                            <td>${lot.size}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Quantity:</th>
+                            <td>${lot.quantity}</td>
+                        </tr>
+                        <tr>
+                            <th>Completed:</th>
+                            <td>${totalCompleted}</td>
+                        </tr>
+                        <tr>
+                            <th>Progress:</th>
+                            <td>
+                                <div style="background-color: #eee; width: 100%; height: 20px; border-radius: 4px;">
+                                    <div style="background-color: ${progress < 50 ? '#f39c12' : progress < 80 ? '#3498db' : '#27ae60'}; 
+                                        width: ${progress}%; height: 100%; border-radius: 4px; text-align: center; color: white; font-size: 12px; line-height: 20px;">
+                                        ${progress}%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <h5 style="margin-top: 20px;">Production History</h5>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Worker</th>
+                                <th>Pieces</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            lotProductions.forEach(prod => {
+                html += `
+                    <tr>
+                        <td>${prod.date}</td>
+                        <td>${prod.time}</td>
+                        <td>${prod.workerName} (${prod.workerId})</td>
+                        <td>${prod.pieces}</td>
+                    </tr>
                 `;
-                usersBody.appendChild(row);
             });
             
-            // Update fixed expenses inputs
-            document.getElementById('rent').value = fixedExpenses.rent || '';
-            document.getElementById('gas').value = fixedExpenses.gas || '';
-            document.getElementById('electricity').value = fixedExpenses.electricity || '';
-            document.getElementById('other').value = fixedExpenses.other || '';
+            html += `
+                        </tbody>
+                    </table>
+                    <button class="btn btn-primary" onclick="generateLotReport()" style="margin-top: 10px;">Back to Report</button>
+                </div>
+            `;
+            
+            resultsContainer.innerHTML = html;
+            document.getElementById("reportResultsContainer").style.display = "block";
         }
         
-        // Delete user (admin only)
-        function deleteUser(username) {
-            if (users.length <= 1) {
-                alert('You cannot delete all users');
+        // Show lot details
+        function showLotDetails(lotNumber) {
+            const lot = lots.find(l => l.lotNumber === lotNumber);
+            if (!lot) return;
+            
+            const lotProductions = productionData.filter(prod => prod.lotNumber === lotNumber);
+            const totalCompleted = lotProductions.reduce((sum, prod) => sum + parseInt(prod.pieces), 0);
+            const progress = Math.min(100, Math.round((totalCompleted / lot.quantity) * 100));
+            
+            let html = `
+                <div class="card">
+                    <h4>Lot Details - ${lotNumber}</h4>
+                    <table class="data-table">
+                        <tr>
+                            <th>Lot Number:</th>
+                            <td>${lot.lotNumber}</td>
+                        </tr>
+                        <tr>
+                            <th>Style:</th>
+                            <td>${lot.style}</td>
+                        </tr>
+                        <tr>
+                            <th>Size:</th>
+                            <td>${lot.size}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Quantity:</th>
+                            <td>${lot.quantity}</td>
+                        </tr>
+                        <tr>
+                            <th>Completed:</th>
+                            <td>${totalCompleted}</td>
+                        </tr>
+                        <tr>
+                            <th>Progress:</th>
+                            <td>
+                                <div style="background-color: #eee; width: 100%; height: 20px; border-radius: 4px;">
+                                    <div style="background-color: ${progress < 50 ? '#f39c12' : progress < 80 ? '#3498db' : '#27ae60'}; 
+                                        width: ${progress}%; height: 100%; border-radius: 4px; text-align: center; color: white; font-size: 12px; line-height: 20px;">
+                                        ${progress}%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <h5 style="margin-top: 20px;">Production History</h5>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Worker</th>
+                                <th>Pieces</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            lotProductions.forEach(prod => {
+                html += `
+                    <tr>
+                        <td>${prod.date}</td>
+                        <td>${prod.time}</td>
+                        <td>${prod.workerName} (${prod.workerId})</td>
+                        <td>${prod.pieces}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                    <button class="btn btn-primary" onclick="generateLotReport()" style="margin-top: 10px;">Back to Report</button>
+                </div>
+            `;
+            
+            document.getElementById("reportResults").innerHTML = html;
+        }
+        
+        // Add new user
+        document.getElementById("addUserForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const userId = document.getElementById("newUserId").value;
+            const name = document.getElementById("newUserName").value;
+            const password = document.getElementById("newUserPassword").value;
+            const role = document.getElementById("newUserRole").value;
+            
+            // Check if user already exists
+            if (users.some(u => u.id === userId)) {
+                alert("User ID already exists!");
                 return;
             }
             
-            if (username === "aradmin") {
-                alert('You cannot delete the admin account');
-                return;
-            }
+            // Add new user
+            users.push({
+                id: userId,
+                name,
+                password,
+                role,
+                lastLogin: ""
+            });
             
-            if (confirm(`Are you sure you want to delete ${username}?`)) {
-                users = users.filter(u => u.username !== username);
-                saveData();
-                updateDashboard();
+            // Add activity
+            activities.unshift({
+                time: new Date().toLocaleString(),
+                activity: "User Added",
+                user: currentUser.id,
+                details: `${userId} (${role})`
+            });
+            
+            // Reset form
+            this.reset();
+            
+            // Reload data
+            loadUserList();
+            loadActivities();
+            
+            alert("User added successfully!");
+        });
+        
+        // Delete user
+        function deleteUser(userId) {
+            if (confirm(`Are you sure you want to delete user ${userId}?`)) {
+                users = users.filter(u => u.id !== userId);
+                
+                // Add activity
+                activities.unshift({
+                    time: new Date().toLocaleString(),
+                    activity: "User Deleted",
+                    user: currentUser.id,
+                    details: userId
+                });
+                
+                // Reload data
+                loadUserList();
+                loadActivities();
+                
+                alert("User deleted successfully!");
             }
         }
         
-        // Save data to localStorage
-        function saveData() {
-            localStorage.setItem('roommateExpenses', JSON.stringify({
-                users,
-                fixedExpenses
-            }));
+        // Deactivate card
+        function deactivateCard(cardNumber) {
+            if (confirm(`Are you sure you want to deactivate card ${cardNumber}?`)) {
+                const card = registeredCards.find(c => c.cardNumber === cardNumber);
+                if (card) {
+                    card.status = "inactive";
+                    
+                    // Add activity
+                    activities.unshift({
+                        time: new Date().toLocaleString(),
+                        activity: "Card Deactivated",
+                        user: currentUser.id,
+                        details: cardNumber
+                    });
+                    
+                    // Reload data
+                    loadRegisteredCards();
+                    loadActivities();
+                    
+                    alert("Card deactivated successfully!");
+                }
+            }
         }
         
-        // Initialize date field with today's date
-        document.getElementById('market-date').valueAsDate = new Date();
+        // Delete lot
+        function deleteLot(lotNumber) {
+            if (confirm(`Are you sure you want to delete lot ${lotNumber}?`)) {
+                lots = lots.filter(l => l.lotNumber !== lotNumber);
+                
+                // Add activity
+                activities.unshift({
+                    time: new Date().toLocaleString(),
+                    activity: "Lot Deleted",
+                    user: currentUser.id,
+                    details: lotNumber
+                });
+                
+                // Reload data
+                loadLots();
+                loadActivities();
+                
+                alert("Lot deleted successfully!");
+            }
+        }
+        
+        // Cancel issued card
+        function cancelIssue(cardNumber, lotNumber) {
+            if (confirm(`Are you sure you want to cancel this issue for card ${cardNumber}?`)) {
+                issuedCards = issuedCards.filter(ic => ic.cardNumber !== cardNumber);
+                
+                // Add activity
+                activities.unshift({
+                    time: new Date().toLocaleString(),
+                    activity: "Card Issue Cancelled",
+                    user: currentUser.id,
+                    details: `${cardNumber}/${lotNumber}`
+                });
+                
+                // Reload data
+                loadIssuedCards();
+                loadActivities();
+                
+                alert("Issue cancelled successfully!");
+            }
+        }
     </script>
 </body>
-</html>
+</html>            
